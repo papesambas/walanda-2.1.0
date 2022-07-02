@@ -2,8 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\EtablissementsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use App\Repository\EtablissementsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: EtablissementsRepository::class)]
 class Etablissements
@@ -49,8 +52,26 @@ class Etablissements
     #[ORM\Column(type: 'string', length: 255)]
     private $email;
 
-    #[ORM\Column(type: 'string', length: 128)]
+    #[ORM\Column(type: 'string', length: 128, unique: true)]
+    #[Gedmo\Slug(fields: ['designation'])]
     private $slug;
+
+    #[ORM\OneToMany(mappedBy: 'etablissement', targetEntity: Enseignements::class)]
+    private $enseignements;
+
+    #[ORM\OneToMany(mappedBy: 'etablissement', targetEntity: Users::class)]
+    private $users;
+
+    public function __construct()
+    {
+        $this->enseignements = new ArrayCollection();
+        $this->users = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->designation;
+    }
 
     public function getId(): ?int
     {
@@ -209,6 +230,66 @@ class Etablissements
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Enseignements>
+     */
+    public function getEnseignements(): Collection
+    {
+        return $this->enseignements;
+    }
+
+    public function addEnseignement(Enseignements $enseignement): self
+    {
+        if (!$this->enseignements->contains($enseignement)) {
+            $this->enseignements[] = $enseignement;
+            $enseignement->setEtablissement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEnseignement(Enseignements $enseignement): self
+    {
+        if ($this->enseignements->removeElement($enseignement)) {
+            // set the owning side to null (unless already changed)
+            if ($enseignement->getEtablissement() === $this) {
+                $enseignement->setEtablissement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Users>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(Users $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setEtablissement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(Users $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getEtablissement() === $this) {
+                $user->setEtablissement(null);
+            }
+        }
 
         return $this;
     }

@@ -7,6 +7,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use App\Controller\Super_Admin\EtablissementsCrudController;
+use App\Entity\Etablissements;
+use App\Entity\Users;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
@@ -45,12 +48,25 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Walanda 2 1 0');
+            ->setTitle('Walanda');
     }
 
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
+        //yield MenuItem::linkToCrud('Etablissements', 'fas fa-list', Etablissements::class);
+        yield MenuItem::subMenu('Etablissement', 'fas fa-university')->setSubItems([
+            MenuItem::linkToCrud('Liste', 'fas fa-list', Etablissements::class)->setAction(Crud::PAGE_INDEX),
+            MenuItem::linkToCrud('Ajout', 'fas fa-plus', Etablissements::class)->setAction(Crud::PAGE_NEW),
+            MenuItem::linkToCrud('Détail', 'fas fa-glasses', Etablissements::class)->setAction(Crud::PAGE_DETAIL)
+
+        ]);
+        yield MenuItem::subMenu('Utilisateurs', 'fas fa-users')->setSubItems([
+            MenuItem::linkToCrud('Liste', 'fas fa-list', Users::class)->setAction(Crud::PAGE_INDEX),
+            MenuItem::linkToCrud('Ajout', 'fas fa-plus', Users::class)->setAction(Crud::PAGE_NEW),
+            MenuItem::linkToCrud('Détail', 'fas fa-glasses', Users::class)->setAction(Crud::PAGE_DETAIL)
+
+        ]);
     }
 }

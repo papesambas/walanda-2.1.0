@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractDashboardController
 {
-    #[Route('/admin', name: 'admin')]
+    #[Route('/educateur', name: 'educateur')]
     public function index(): Response
     {
         return parent::index();
@@ -35,7 +35,7 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Walanda 2 1 0');
+            ->setTitle('Walanda');
     }
 
     public function configureMenuItems(): iterable
