@@ -26,6 +26,10 @@ class Classes
     #[ORM\JoinColumn(nullable: false)]
     private $niveau;
 
+    public function __toString()
+    {
+        return $this->designation;
+    }
     public function getId(): ?int
     {
         return $this->id;

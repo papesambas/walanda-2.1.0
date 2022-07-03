@@ -25,9 +25,18 @@ class Niveaux
     #[ORM\OneToMany(mappedBy: 'niveau', targetEntity: Classes::class)]
     private $classes;
 
+    #[ORM\OneToMany(mappedBy: 'niveau', targetEntity: Categories::class, orphanRemoval: true)]
+    private $categories;
+
     public function __construct()
     {
         $this->classes = new ArrayCollection();
+        $this->categories = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->designation;
     }
 
     public function getId(): ?int
@@ -83,6 +92,36 @@ class Niveaux
             // set the owning side to null (unless already changed)
             if ($class->getNiveau() === $this) {
                 $class->setNiveau(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Categories>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(Categories $category): self
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
+            $category->setNiveau($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Categories $category): self
+    {
+        if ($this->categories->removeElement($category)) {
+            // set the owning side to null (unless already changed)
+            if ($category->getNiveau() === $this) {
+                $category->setNiveau(null);
             }
         }
 

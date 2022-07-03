@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UsersRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -41,7 +43,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private $createdAt;
 
     #[ORM\Column(type: 'boolean')]
-    private $isActif;
+    private $isActif = false;
 
     #[ORM\ManyToOne(targetEntity: Etablissements::class, inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
@@ -49,6 +51,19 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Publications::class, orphanRemoval: true)]
+    private $publications;
+
+    public function __construct()
+    {
+        $this->publications = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->username;
+    }
 
     public function getId(): ?int
     {
@@ -214,6 +229,36 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Publications>
+     */
+    public function getPublications(): Collection
+    {
+        return $this->publications;
+    }
+
+    public function addPublication(Publications $publication): self
+    {
+        if (!$this->publications->contains($publication)) {
+            $this->publications[] = $publication;
+            $publication->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePublication(Publications $publication): self
+    {
+        if ($this->publications->removeElement($publication)) {
+            // set the owning side to null (unless already changed)
+            if ($publication->getUser() === $this) {
+                $publication->setUser(null);
+            }
+        }
 
         return $this;
     }

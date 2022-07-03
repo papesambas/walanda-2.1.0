@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,10 +23,26 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('fullName', TextType::class)
-            ->add('username', TextType::class)
-            ->add('telephone', TelType::class)
-            ->add('email', EmailType::class)
+            ->add('fullName', TextType::class, [
+                'attr' => [
+                    'placeholder' => 'Nom et Prénom'
+                ]
+            ])
+            ->add('username', TextType::class, [
+                'attr' => [
+                    'placeholder' => 'Pseudo'
+                ]
+            ])
+            ->add('telephone', TelType::class, [
+                'attr' => [
+                    'placeholder' => 'Téléphone'
+                ]
+            ])
+            ->add('email', EmailType::class, [
+                'attr' => [
+                    'placeholder' => 'Adresse Email'
+                ]
+            ])
             ->add('etablissement', EntityType::class, [
                 'class' => Etablissements::class
             ])
@@ -37,11 +54,21 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('plainPassword', PasswordType::class, [
+            ->add('plainPassword', RepeatedType::class, [
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
+                'options' => [
+                    'attr' => [
+                        'type' => 'password',
+                        'placeholder' => 'Mot de Passe',
+
+                    ],
+                ],
+                'first_options' => ['label' => 'Mot de passe'],
+                'second_options' => ['label' => 'Confirmer le Mot de passe'],
+
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Please enter a password',

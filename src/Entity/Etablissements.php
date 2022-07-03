@@ -53,7 +53,7 @@ class Etablissements
     private $email;
 
     #[ORM\Column(type: 'string', length: 128, unique: true)]
-    #[Gedmo\Slug(fields: ['designation'])]
+    #[Gedmo\Slug(['designation'])]
     private $slug;
 
     #[ORM\OneToMany(mappedBy: 'etablissement', targetEntity: Enseignements::class)]
@@ -227,12 +227,12 @@ class Etablissements
         return $this->slug;
     }
 
-    public function setSlug(string $slug): self
+    /*public function setSlug(string $slug): self
     {
         $this->slug = $slug;
 
         return $this;
-    }
+    }*/
 
     /**
      * @return Collection<int, Enseignements>
