@@ -21,11 +21,12 @@ class DashboardController extends AbstractDashboardController
     #[Route('/super/admin', name: 'super_admin')]
     public function index(): Response
     {
-        $url = $this->adminUrlGenerator
-            ->setController(EtablissementsCrudController::class)
-            ->generateUrl();
+        return $this->render('admin/dashboard.html.twig');
+        //$url = $this->adminUrlGenerator
+        //    ->setController(EtablissementsCrudController::class)
+        //    ->generateUrl();
 
-        return $this->redirect($url);
+        //return $this->redirect($url);
         //$adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
 
         // Option 1. You can make your dashboard redirect to some common page of your backend
